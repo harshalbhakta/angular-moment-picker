@@ -1,4 +1,8 @@
 /*! Angular Moment Picker - v0.10.2 - http://indrimuska.github.io/angular-moment-picker - (c) 2015 Indri Muska - MIT */
+
+/* we have fixed a bug causing date picker to not scroll when modal is scrolled */
+/* Bug fix by Deep Shah */
+
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -371,7 +375,9 @@ var Directive = (function () {
                             return;
                         $scope.isOpen = true;
                         $scope.view.isOpen = true;
-                        document.body.appendChild($scope.picker[0]);
+
+                        //document.body.appendChild($scope.picker[0]);
+                        $scope.picker[0].classList.remove('hidden');
                         $scope.view.position();
                     },
                     close: function () {
@@ -380,26 +386,28 @@ var Directive = (function () {
                         $scope.isOpen = false;
                         $scope.view.isOpen = false;
                         $scope.view.selected = $scope.startView;
-                        $scope.picker[0].parentNode.removeChild($scope.picker[0]);
+
+                        //$scope.picker[0].parentNode.removeChild($scope.picker[0]);
+                        $scope.picker[0].classList.add('hidden');
                     },
                     position: function () {
-                        if (!$scope.view.isOpen || $scope.position || $scope.inline)
+                        if (!$scope.view.isOpen || $scope.position || $scope.inline )
                             return;
-                        var element = $element[0], picker = $scope.picker.children()[0], hasClassTop = $scope.picker.hasClass('top'), hasClassRight = $scope.picker.hasClass('right'), offset = helpers_1.getOffset($element[0]), top = offset.top - _this.$window.pageYOffset, left = offset.left - _this.$window.pageXOffset, winWidth = _this.$window.innerWidth, winHeight = _this.$window.innerHeight, shouldHaveClassTop = top + _this.$window.pageYOffset - picker.offsetHeight > 0 && top > winHeight / 2, shouldHaveClassRight = left + picker.offsetWidth > winWidth, pickerTop = offset.top + (shouldHaveClassTop ? 0 : element.offsetHeight) + 'px', pickerLeft = offset.left + 'px', pickerWidth = element.offsetWidth + 'px';
-                        if (!hasClassTop && shouldHaveClassTop)
-                            $scope.picker.addClass('top');
-                        if (hasClassTop && !shouldHaveClassTop)
-                            $scope.picker.removeClass('top');
-                        if (!hasClassRight && shouldHaveClassRight)
-                            $scope.picker.addClass('right');
-                        if (hasClassRight && !shouldHaveClassRight)
-                            $scope.picker.removeClass('right');
-                        if ($scope.picker.css('top') !== pickerTop)
-                            $scope.picker.css('top', pickerTop);
-                        if ($scope.picker.css('left') !== pickerLeft)
-                            $scope.picker.css('left', pickerLeft);
-                        if ($scope.picker.css('width') !== pickerWidth)
-                            $scope.picker.css('width', pickerWidth);
+                        // var element = $element[0], picker = $scope.picker.children()[0], hasClassTop = $scope.picker.hasClass('top'), hasClassRight = $scope.picker.hasClass('right'), offset = helpers_1.getOffset($element[0]), top = offset.top - _this.$window.pageYOffset, left = offset.left - _this.$window.pageXOffset, winWidth = _this.$window.innerWidth, winHeight = _this.$window.innerHeight, shouldHaveClassTop = top + _this.$window.pageYOffset - picker.offsetHeight > 0 && top > winHeight / 2, shouldHaveClassRight = left + picker.offsetWidth > winWidth, pickerTop = offset.top + (shouldHaveClassTop ? 0 : element.offsetHeight) + 'px', pickerLeft = offset.left + 'px', pickerWidth = element.offsetWidth + 'px';
+                        // if (!hasClassTop && shouldHaveClassTop)
+                        //     $scope.picker.addClass('top');
+                        // if (hasClassTop && !shouldHaveClassTop)
+                        //     $scope.picker.removeClass('top');
+                        // if (!hasClassRight && shouldHaveClassRight)
+                        //     $scope.picker.addClass('right');
+                        // if (hasClassRight && !shouldHaveClassRight)
+                        //     $scope.picker.removeClass('right');
+                        // if ($scope.picker.css('top') !== pickerTop)
+                        //     $scope.picker.css('top', pickerTop);
+                        // if ($scope.picker.css('left') !== pickerLeft)
+                        //     $scope.picker.css('left', pickerLeft);
+                        // if ($scope.picker.css('width') !== pickerWidth)
+                        //     $scope.picker.css('width', pickerWidth);
                     },
                     keydown: function (e) {
                         var view = $scope.views[$scope.view.selected], precision = $scope.views.precisions[$scope.view.selected].replace('date', 'day'), singleUnit = _this.provider[precision + 'sStep'] || 1, operation = [utility_1.KEYS.up, utility_1.KEYS.left].indexOf(e.keyCode) >= 0 ? 'subtract' : 'add', highlight = function (vertical) {
@@ -504,8 +512,11 @@ var Directive = (function () {
                     : angular.element($element[0]);
                 $scope.input.addClass('moment-picker-input').attr('tabindex', 0);
                 ($scope.position || '').split(' ').forEach(function (className) { return $scope.picker.addClass(className); });
-                if (!$scope.inline)
-                    $scope.picker[0].parentNode.removeChild($scope.picker[0]);
+                if (!$scope.inline){
+                    $element.after($scope.picker);
+                    $scope.picker.addClass('hidden');
+                    //$scope.picker[0].parentNode.removeChild($scope.picker[0]);
+                }
                 else {
                     $element.after($scope.picker);
                     $scope.picker.addClass('inline');
